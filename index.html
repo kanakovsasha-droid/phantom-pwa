@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Phantom">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#000000">
+  <meta name="format-detection" content="telephone=no">
+  <title>Phantom</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- Background screenshot — единственный UI -->
+    <div id="bg"></div>
+
+    <!-- Overlay: только живой баланс -->
+    <div id="balance-overlay">
+      <div id="main-balance">$0.00</div>
+      <div id="sub-balance">
+        <span id="balance-change">+$0.00</span>
+        <span id="balance-percent">+0.00%</span>
+      </div>
+    </div>
+
+    <!-- Зона тройного тапа (header-area) -->
+    <div id="tap-zone"></div>
+
+    <!-- Admin panel -->
+    <div id="admin-panel" class="hidden">
+      <div id="admin-backdrop"></div>
+      <div id="admin-content">
+        <h3>Edit Balance</h3>
+        <div class="field">
+          <label>Total Balance ($)</label>
+          <input type="number" id="input-balance" placeholder="0.00" step="0.01" inputmode="decimal" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Change ($)</label>
+          <input type="number" id="input-change" placeholder="0.00" step="0.01" inputmode="decimal" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Change (%)</label>
+          <input type="number" id="input-percent" placeholder="0.00" step="0.01" inputmode="decimal" autocomplete="off">
+        </div>
+        <div class="btn-row">
+          <button id="btn-close">Cancel</button>
+          <button id="btn-apply">Apply</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
