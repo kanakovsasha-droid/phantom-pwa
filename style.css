@@ -56,7 +56,7 @@ body {
 /* ── Balance overlay ── */
 #balance-overlay {
   position: absolute;
-  top: calc(env(safe-area-inset-top, 47px) + 120px);
+  top: 120px;
   left: 20px;
   z-index: 10;
   pointer-events: none;
@@ -136,8 +136,8 @@ body {
 /* ── Кнопка настроек (поверх иконки поиска) ── */
 #settings-btn {
   position: absolute;
-  top: calc(env(safe-area-inset-top, 47px) + 55px);
-  right: 12px;
+  top: 75px;
+  right: 10px;
   width: 50px;
   height: 50px;
   z-index: 20;
