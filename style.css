@@ -103,6 +103,38 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ── Pull-to-refresh индикатор ── */
+#ptr-indicator {
+  position: absolute;
+  top: -56px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  background: #1c1c1e;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  transition: top 0.1s ease;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+}
+
+#ptr-indicator svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.2s ease;
+}
+
+#ptr-indicator.spinning svg {
+  animation: ptr-spin 0.6s linear infinite;
+}
+
+@keyframes ptr-spin {
+  to { transform: rotate(360deg); }
+}
+
 /* ── Кнопка настроек (поверх иконки поиска) ── */
 #settings-btn {
   position: absolute;
