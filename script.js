@@ -119,7 +119,7 @@
     if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
 
     var dy = e.touches[0].clientY - ptrStartY;
-    if (dy > 0 && !adminPanel.classList.contains('hidden') === false) {
+    if (dy > 0 && adminPanel.classList.contains('hidden')) {
       var progress = Math.min(dy, PTR_THRESHOLD);
       ptrIndicator.style.top = (progress * 0.7 - 56) + 'px';
       var rotate = (progress / PTR_THRESHOLD) * 360;
