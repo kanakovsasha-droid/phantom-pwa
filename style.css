@@ -56,15 +56,10 @@ body {
 }
 
 /* ── Balance overlay ── */
-/*
-  Позиции вымерены под iPhone 12/13/14 390×844:
-    top: 134px  — сразу под header-строкой "kelly"
-    left: 24px  — стандартный левый отступ Phantom
-*/
 #balance-overlay {
   position: absolute;
-  top: 134px;
-  left: 24px;
+  top: 112px;
+  left: 20px;
   z-index: 10;
   pointer-events: none;
 }
@@ -108,16 +103,16 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── Tap zone (header trigger for admin) ── */
-#tap-zone {
+/* ── Кнопка настроек (поверх иконки поиска) ── */
+#settings-btn {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 115px;
+  top: 52px;
+  right: 12px;
+  width: 44px;
+  height: 44px;
   z-index: 20;
-  /* transparent — passes visual through to bg */
   background: transparent;
+  cursor: pointer;
 }
 
 /* ── Admin panel ── */

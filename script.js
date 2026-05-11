@@ -26,7 +26,7 @@
   var inputPercent   = document.getElementById('input-percent');
   var btnApply       = document.getElementById('btn-apply');
   var btnClose       = document.getElementById('btn-close');
-  var tapZone        = document.getElementById('tap-zone');
+  var settingsBtn    = document.getElementById('settings-btn');
 
   /* ── Formatters ── */
   function fmtMain(v) {
@@ -55,23 +55,15 @@
 
   render();
 
-  /* ── Triple-tap detection on header zone ── */
-  var tapCount = 0;
-  var tapTimer = null;
-
-  tapZone.addEventListener('touchstart', function () {
-    tapCount++;
-    clearTimeout(tapTimer);
-    tapTimer = setTimeout(function () {
-      tapCount = 0;
-    }, 450);
-
-    if (tapCount >= 3) {
-      tapCount = 0;
-      clearTimeout(tapTimer);
-      openAdmin();
-    }
+  /* ── Кнопка настроек ── */
+  settingsBtn.addEventListener('touchstart', function (e) {
+    e.stopPropagation();
+    openAdmin();
   }, { passive: true });
+
+  settingsBtn.addEventListener('click', function () {
+    openAdmin();
+  });
 
   /* ── Admin open / close ── */
   function openAdmin() {
