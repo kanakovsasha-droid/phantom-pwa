@@ -9,40 +9,32 @@
   -webkit-user-select: none;
 }
 
-/* ── Root ── */
 html {
   height: 100%;
   overflow: hidden;
   background: #000;
-  /* Prevent iOS rubber-band scroll */
   overscroll-behavior: none;
 }
 
 body {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   overflow: hidden;
   background: #000;
-  /* Disable font size inflation */
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
 
-/* ── App shell ── */
 #app {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   overflow: hidden;
   touch-action: none;
 }
 
-/* ── Background screenshot ── */
+/* ── Background ── */
 #bg {
   position: absolute;
   inset: 0;
@@ -52,8 +44,36 @@ body {
   background-repeat: no-repeat;
 }
 
+/* ── Аватарка-кнопка (над K кружком) ── */
+#avatar-btn {
+  position: absolute;
+  z-index: 20;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 50%;
+}
 
-/* ── Balance overlay ── */
+/* ── Ник поверх "kelly" ── */
+#username-overlay {
+  position: absolute;
+  z-index: 10;
+  pointer-events: none;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Чёрный прямоугольник закрывает статичный баланс скрина ── */
+#balance-cover {
+  position: absolute;
+  z-index: 9;
+  background: #000000;
+}
+
+/* ── Живой баланс ── */
 #balance-overlay {
   position: absolute;
   z-index: 10;
@@ -62,12 +82,11 @@ body {
 
 #main-balance {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-  font-size: 54px;
+  font-size: 46px;
   font-weight: 700;
   color: #ffffff;
   line-height: 1;
   letter-spacing: -1px;
-  /* Disable sub-pixel AA shift on reflow */
   -webkit-font-smoothing: antialiased;
 }
 
@@ -75,12 +94,12 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 #balance-change {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 400;
   color: #8e8e93;
   line-height: 1;
@@ -89,17 +108,17 @@ body {
 
 #balance-percent {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: #ffffff;
   background-color: #2c2c2e;
-  padding: 3px 9px;
+  padding: 3px 8px;
   border-radius: 20px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── Pull-to-refresh индикатор ── */
+/* ── Pull-to-refresh ── */
 #ptr-indicator {
   position: absolute;
   top: -56px;
@@ -131,16 +150,6 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* ── Кнопка настроек (поверх иконки поиска) ── */
-#settings-btn {
-  position: absolute;
-  width: 50px;
-  height: 50px;
-  z-index: 20;
-  background: transparent;
-  cursor: pointer;
-}
-
 /* ── Admin panel ── */
 #admin-panel {
   position: absolute;
@@ -151,14 +160,12 @@ body {
   justify-content: center;
 }
 
-#admin-panel.hidden {
-  display: none;
-}
+#admin-panel.hidden { display: none; }
 
 #admin-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.82);
+  background: rgba(0,0,0,0.82);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
@@ -173,7 +180,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  /* iOS safe area: nudge up slightly so keyboard doesn't hide it */
   margin-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -186,11 +192,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
+.field { display: flex; flex-direction: column; gap: 5px; }
 
 .field label {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
@@ -213,7 +215,6 @@ body {
   font-weight: 400;
   outline: none;
   width: 100%;
-  /* Allow text selection in inputs only */
   user-select: text;
   -webkit-user-select: text;
   touch-action: manipulation;
@@ -222,11 +223,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-.field input::placeholder {
-  color: #48484a;
-}
+.field input::placeholder { color: #48484a; }
 
-/* Remove iOS number input arrows */
 .field input[type="number"]::-webkit-inner-spin-button,
 .field input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -234,11 +232,7 @@ body {
   margin: 0;
 }
 
-.btn-row {
-  display: flex;
-  gap: 10px;
-  margin-top: 2px;
-}
+.btn-row { display: flex; gap: 10px; margin-top: 2px; }
 
 .btn-row button {
   flex: 1;
@@ -253,20 +247,9 @@ body {
   appearance: none;
   -webkit-appearance: none;
   -webkit-font-smoothing: antialiased;
-  /* Active press feedback */
   transition: opacity 0.1s ease;
 }
 
-.btn-row button:active {
-  opacity: 0.75;
-}
-
-#btn-apply {
-  background: #9945ff;
-  color: #ffffff;
-}
-
-#btn-close {
-  background: #2c2c2e;
-  color: #ffffff;
-}
+.btn-row button:active { opacity: 0.75; }
+#btn-apply { background: #9945ff; color: #ffffff; }
+#btn-close  { background: #2c2c2e; color: #ffffff; }

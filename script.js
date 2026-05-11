@@ -1,68 +1,50 @@
 (function () {
   'use strict';
 
-  /* ── State ── */
-  var DEFAULT_STATE = { balance: 0, change: 0, percent: 0 };
-  var state = Object.assign({}, DEFAULT_STATE);
+  /* ── Размеры исходного скриншота (физические пиксели) ── */
+  var IMG_W = 1206, IMG_H = 2622;
 
+  /*
+    Доли от изображения где что находится (замерено по ui.jpg):
+    - Аватарка K: top 8.5%, left 3.5%, size ~9% ширины
+    - Ник "kelly": top 8.5%, left 16%
+    - Баланс: top 13.5%, left 5%
+    - Закрашиваем область: top 13%, left 3%, w 70%, h 10%
+  */
+  var FRAC = {
+    avatarTop:   0.085, avatarLeft:  0.035, avatarSize: 0.105,
+    nameTop:     0.085, nameLeft:    0.160,
+    balTop:      0.135, balLeft:     0.050,
+    coverTop:    0.128, coverLeft:   0.028, coverW: 0.72, coverH: 0.095
+  };
+
+  /* ── State ── */
+  var DEFAULT = { balance: 0, change: 0, percent: 0, name: 'kelly' };
+  var state = Object.assign({}, DEFAULT);
   try {
-    var saved = localStorage.getItem('phantom_balance');
-    if (saved) {
-      var parsed = JSON.parse(saved);
-      if (typeof parsed === 'object' && parsed !== null) {
-        state = parsed;
-      }
-    }
+    var saved = localStorage.getItem('phantom_state');
+    if (saved) state = Object.assign({}, DEFAULT, JSON.parse(saved));
   } catch (_) {}
 
-  /* ── DOM refs ── */
+  /* ── DOM ── */
   var mainBalance    = document.getElementById('main-balance');
   var balanceChange  = document.getElementById('balance-change');
   var balancePercent = document.getElementById('balance-percent');
+  var balanceOverlay = document.getElementById('balance-overlay');
+  var balanceCover   = document.getElementById('balance-cover');
+  var usernameEl     = document.getElementById('username-overlay');
+  var avatarBtn      = document.getElementById('avatar-btn');
   var adminPanel     = document.getElementById('admin-panel');
   var adminBackdrop  = document.getElementById('admin-backdrop');
+  var inputName      = document.getElementById('input-name');
   var inputBalance   = document.getElementById('input-balance');
   var inputChange    = document.getElementById('input-change');
   var inputPercent   = document.getElementById('input-percent');
   var btnApply       = document.getElementById('btn-apply');
   var btnClose       = document.getElementById('btn-close');
-  var settingsBtn    = document.getElementById('settings-btn');
+  var ptrIndicator   = document.getElementById('ptr-indicator');
 
-  /* ── Formatters ── */
-  function fmtMain(v) {
-    var abs = Math.abs(Number(v) || 0);
-    return '$' + abs.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  }
-
-  function fmtChange(v) {
-    var n = Number(v) || 0;
-    var sign = n >= 0 ? '+' : '-';
-    return sign + '$' + Math.abs(n).toFixed(2);
-  }
-
-  function fmtPercent(v) {
-    var n = Number(v) || 0;
-    var sign = n >= 0 ? '+' : '-';
-    return sign + Math.abs(n).toFixed(2) + '%';
-  }
-
-  /* ── Render ── */
-  function render() {
-    mainBalance.textContent    = fmtMain(state.balance);
-    balanceChange.textContent  = fmtChange(state.change);
-    balancePercent.textContent = fmtPercent(state.percent);
-  }
-
-  render();
-
-  /* ── Динамическое позиционирование баланса по изображению ── */
-  var IMG_W = 1206, IMG_H = 2622;
-  // Доля от размера изображения где находится баланс
-  var BAL_TOP_FRAC  = 0.135; // ~355px / 2622
-  var BAL_LEFT_FRAC = 0.05;  // ~60px  / 1206
-  var SET_TOP_FRAC  = 0.082; // поисковая иконка по Y
-  var SET_RIGHT_PX  = 25;
-
+  /* ── Позиционирование по изображению ── */
   function positionElements() {
     var dpr  = window.devicePixelRatio || 1;
     var vw   = window.innerWidth;
@@ -70,72 +52,90 @@
     var cssW = IMG_W / dpr;
     var cssH = IMG_H / dpr;
     var scale = Math.max(vw / cssW, vh / cssH);
+    var dispW = cssW * scale;
+    var dispH = cssH * scale;
 
-    var top  = cssH * scale * BAL_TOP_FRAC;
-    var left = cssW * scale * BAL_LEFT_FRAC;
-    var sTop = cssH * scale * SET_TOP_FRAC;
+    function px(fracY, fracX, el, extraW, extraH) {
+      el.style.top  = (dispH * fracY) + 'px';
+      el.style.left = (dispW * fracX) + 'px';
+      if (extraW !== undefined) el.style.width  = extraW + 'px';
+      if (extraH !== undefined) el.style.height = extraH + 'px';
+    }
 
-    balanceOverlay.style.top  = top  + 'px';
-    balanceOverlay.style.left = left + 'px';
-    settingsBtn.style.top     = sTop + 'px';
-    settingsBtn.style.right   = SET_RIGHT_PX + 'px';
+    var avatarPx = dispW * FRAC.avatarSize;
+    px(FRAC.avatarTop, FRAC.avatarLeft, avatarBtn, avatarPx, avatarPx);
+    avatarBtn.style.marginTop  = -(avatarPx / 2) + 'px';
+
+    px(FRAC.nameTop, FRAC.nameLeft, usernameEl);
+    usernameEl.style.marginTop = '-11px';
+
+    px(FRAC.balTop,   FRAC.balLeft,  balanceOverlay);
+
+    /* Закрашивающий прямоугольник */
+    balanceCover.style.top    = (dispH * FRAC.coverTop)  + 'px';
+    balanceCover.style.left   = (dispW * FRAC.coverLeft) + 'px';
+    balanceCover.style.width  = (dispW * FRAC.coverW)    + 'px';
+    balanceCover.style.height = (dispH * FRAC.coverH)    + 'px';
   }
 
-  var balanceOverlay = document.getElementById('balance-overlay');
   positionElements();
   window.addEventListener('resize', positionElements);
 
-  /* ── Кнопка настроек ── */
-  settingsBtn.addEventListener('touchstart', function (e) {
-    e.stopPropagation();
-    openAdmin();
-  }, { passive: true });
+  /* ── Форматирование ── */
+  function fmtMain(v) {
+    var abs = Math.abs(Number(v) || 0);
+    return '$' + abs.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function fmtChange(v) {
+    var n = Number(v) || 0;
+    return (n >= 0 ? '+' : '-') + '$' + Math.abs(n).toFixed(2);
+  }
+  function fmtPercent(v) {
+    var n = Number(v) || 0;
+    return (n >= 0 ? '+' : '-') + Math.abs(n).toFixed(2) + '%';
+  }
 
-  settingsBtn.addEventListener('click', function () {
-    openAdmin();
-  });
+  /* ── Рендер ── */
+  function render() {
+    mainBalance.textContent    = fmtMain(state.balance);
+    balanceChange.textContent  = fmtChange(state.change);
+    balancePercent.textContent = fmtPercent(state.percent);
+    usernameEl.textContent     = state.name || 'kelly';
+  }
+  render();
 
-  /* ── Admin open / close ── */
+  /* ── Admin open/close ── */
   function openAdmin() {
+    inputName.value    = state.name    || '';
     inputBalance.value = state.balance !== 0 ? String(state.balance) : '';
     inputChange.value  = state.change  !== 0 ? String(state.change)  : '';
     inputPercent.value = state.percent !== 0 ? String(state.percent) : '';
     adminPanel.classList.remove('hidden');
   }
+  function closeAdmin() { adminPanel.classList.add('hidden'); }
 
-  function closeAdmin() {
-    adminPanel.classList.add('hidden');
-  }
+  avatarBtn.addEventListener('touchstart', function (e) {
+    e.stopPropagation(); openAdmin();
+  }, { passive: true });
+  avatarBtn.addEventListener('click', openAdmin);
 
-  /* Close on backdrop tap */
   adminBackdrop.addEventListener('touchstart', function (e) {
     if (e.target === adminBackdrop) closeAdmin();
   }, { passive: true });
 
-  /* Apply button */
   btnApply.addEventListener('click', function () {
+    state.name    = inputName.value.trim() || 'kelly';
     state.balance = parseFloat(inputBalance.value) || 0;
     state.change  = parseFloat(inputChange.value)  || 0;
     state.percent = parseFloat(inputPercent.value) || 0;
-    try {
-      localStorage.setItem('phantom_balance', JSON.stringify(state));
-    } catch (_) {}
+    try { localStorage.setItem('phantom_state', JSON.stringify(state)); } catch (_) {}
     render();
     closeAdmin();
   });
-
-  /* Cancel button */
   btnClose.addEventListener('click', closeAdmin);
 
-  /* ── Prevent zoom (pinch) ── */
-  document.addEventListener('gesturestart',  function (e) { e.preventDefault(); }, { passive: false });
-  document.addEventListener('gesturechange', function (e) { e.preventDefault(); }, { passive: false });
-  document.addEventListener('gestureend',    function (e) { e.preventDefault(); }, { passive: false });
-
   /* ── Pull-to-refresh ── */
-  var ptrIndicator = document.getElementById('ptr-indicator');
-  var ptrStartY = 0;
-  var ptrActive = false;
+  var ptrStartY = 0, ptrActive = false;
   var PTR_THRESHOLD = 80;
 
   document.addEventListener('touchstart', function (e) {
@@ -143,7 +143,6 @@
     ptrActive = false;
   }, { passive: true });
 
-  /* ── Prevent scroll/bounce — allow native scroll inside inputs ── */
   document.addEventListener('touchmove', function (e) {
     var t = e.target;
     if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
@@ -152,11 +151,9 @@
     if (dy > 0 && adminPanel.classList.contains('hidden')) {
       var progress = Math.min(dy, PTR_THRESHOLD);
       ptrIndicator.style.top = (progress * 0.7 - 56) + 'px';
-      var rotate = (progress / PTR_THRESHOLD) * 360;
-      ptrIndicator.querySelector('svg').style.transform = 'rotate(' + rotate + 'deg)';
+      ptrIndicator.querySelector('svg').style.transform = 'rotate(' + (progress / PTR_THRESHOLD * 360) + 'deg)';
       ptrActive = dy >= PTR_THRESHOLD;
     }
-
     e.preventDefault();
   }, { passive: false });
 
@@ -172,13 +169,15 @@
     ptrActive = false;
   }, { passive: true });
 
-  /* ── Disable double-tap zoom ── */
+  /* ── Блокировка зума ── */
+  document.addEventListener('gesturestart',  function (e) { e.preventDefault(); }, { passive: false });
+  document.addEventListener('gesturechange', function (e) { e.preventDefault(); }, { passive: false });
+  document.addEventListener('gestureend',    function (e) { e.preventDefault(); }, { passive: false });
+
   var lastTouchEnd = 0;
   document.addEventListener('touchend', function (e) {
     var now = Date.now();
-    if (now - lastTouchEnd < 300) {
-      e.preventDefault();
-    }
+    if (now - lastTouchEnd < 300) e.preventDefault();
     lastTouchEnd = now;
   }, { passive: false });
 
