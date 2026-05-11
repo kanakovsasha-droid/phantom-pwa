@@ -58,7 +58,7 @@ body {
 /* ── Balance overlay ── */
 #balance-overlay {
   position: absolute;
-  top: 112px;
+  top: calc(env(safe-area-inset-top, 47px) + 68px);
   left: 20px;
   z-index: 10;
   pointer-events: none;
