@@ -1,4 +1,4 @@
-var CACHE_NAME = 'phantom-v1';
+var CACHE_NAME = 'phantom-v3';
 
 var CACHE_ASSETS = [
   './',
@@ -46,28 +46,32 @@ self.addEventListener('activate', function (event) {
   );
 });
 
-/* ── Fetch: cache-first strategy ── */
+/* ── Fetch: network-first для CSS/JS, cache-first для картинок ── */
 self.addEventListener('fetch', function (event) {
-  /* Only handle GET requests */
   if (event.request.method !== 'GET') return;
 
-  event.respondWith(
-    caches.match(event.request).then(function (cached) {
-      if (cached) return cached;
+  var url = event.request.url;
+  var isAsset = /\.(jpg|jpeg|png|gif|webp|ico)$/i.test(url);
 
-      return fetch(event.request).then(function (response) {
-        /* Cache valid responses for future offline use */
-        if (response && response.status === 200 && response.type === 'basic') {
-          var toCache = response.clone();
-          caches.open(CACHE_NAME).then(function (cache) {
-            cache.put(event.request, toCache);
-          });
-        }
-        return response;
+  if (isAsset) {
+    event.respondWith(
+      caches.match(event.request).then(function (cached) {
+        return cached || fetch(event.request).then(function (res) {
+          var clone = res.clone();
+          caches.open(CACHE_NAME).then(function (c) { c.put(event.request, clone); });
+          return res;
+        });
+      })
+    );
+  } else {
+    event.respondWith(
+      fetch(event.request).then(function (res) {
+        var clone = res.clone();
+        caches.open(CACHE_NAME).then(function (c) { c.put(event.request, clone); });
+        return res;
       }).catch(function () {
-        /* If fetch fails and no cache, return empty response */
-        return new Response('', { status: 503 });
-      });
-    })
-  );
+        return caches.match(event.request);
+      })
+    );
+  }
 });

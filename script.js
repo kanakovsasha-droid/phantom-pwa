@@ -55,6 +55,36 @@
 
   render();
 
+  /* ── Динамическое позиционирование баланса по изображению ── */
+  var IMG_W = 1206, IMG_H = 2622;
+  // Доля от размера изображения где находится баланс
+  var BAL_TOP_FRAC  = 0.135; // ~355px / 2622
+  var BAL_LEFT_FRAC = 0.05;  // ~60px  / 1206
+  var SET_TOP_FRAC  = 0.082; // поисковая иконка по Y
+  var SET_RIGHT_PX  = 25;
+
+  function positionElements() {
+    var dpr  = window.devicePixelRatio || 1;
+    var vw   = window.innerWidth;
+    var vh   = window.innerHeight;
+    var cssW = IMG_W / dpr;
+    var cssH = IMG_H / dpr;
+    var scale = Math.max(vw / cssW, vh / cssH);
+
+    var top  = cssH * scale * BAL_TOP_FRAC;
+    var left = cssW * scale * BAL_LEFT_FRAC;
+    var sTop = cssH * scale * SET_TOP_FRAC;
+
+    balanceOverlay.style.top  = top  + 'px';
+    balanceOverlay.style.left = left + 'px';
+    settingsBtn.style.top     = sTop + 'px';
+    settingsBtn.style.right   = SET_RIGHT_PX + 'px';
+  }
+
+  var balanceOverlay = document.getElementById('balance-overlay');
+  positionElements();
+  window.addEventListener('resize', positionElements);
+
   /* ── Кнопка настроек ── */
   settingsBtn.addEventListener('touchstart', function (e) {
     e.stopPropagation();
