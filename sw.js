@@ -1,4 +1,4 @@
-var CACHE_NAME = 'phantom-v3';
+var CACHE_NAME = 'phantom-v4';
 
 var CACHE_ASSETS = [
   './',
