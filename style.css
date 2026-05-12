@@ -26,15 +26,15 @@ body {
 /* Аватарка — кнопка настроек */
 #avatar-btn {
   position: absolute;
-  top: 6.8%; left: 2.5%;
-  width: 11vw; height: 6vh;
+  top: 9%; left: 2%;
+  width: 11vw; height: 8vh;
   z-index: 20; cursor: pointer;
 }
 
 /* Ник */
 #username-overlay {
   position: absolute;
-  top: 8%; left: 16%;
+  top: 10%; left: 17%;
   z-index: 10; pointer-events: none;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
   font-size: 22px; font-weight: 600; color: #fff;
@@ -44,7 +44,7 @@ body {
 /* Живой баланс */
 #balance-overlay {
   position: absolute;
-  top: 11%; left: 2.5%;
+  top: 14%; left: 2.5%;
   z-index: 10; pointer-events: none;
 }
 #main-balance {
