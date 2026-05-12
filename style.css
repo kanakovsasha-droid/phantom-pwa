@@ -90,10 +90,13 @@ body {
 
 /* Token list */
 #token-scroll {
-  flex: 1; overflow: hidden;
+  flex: 1;
+  overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   padding: 0 16px;
   display: flex; flex-direction: column;
 }
+#token-scroll::-webkit-scrollbar { display: none; }
 
 #tokens-header {
   display: flex; align-items: center;
@@ -103,22 +106,24 @@ body {
 }
 
 #token-list-inner {
-  flex: 1; display: flex; flex-direction: column; gap: 7px;
+  display: flex; flex-direction: column; gap: 7px;
+  padding-bottom: 12px;
 }
 
 .token-item {
-  flex: 1;
   display: flex; align-items: center; gap: 14px;
   background: #1c1c1e;
   border-radius: 16px;
-  padding: 10px 14px;
-  min-height: 0;
+  padding: 13px 14px;
+  flex-shrink: 0;
 }
 .token-icon {
   width: 46px; height: 46px;
   border-radius: 50%;
   object-fit: cover;
+  object-position: center;
   flex-shrink: 0;
+  background: #000;
 }
 .token-meta {
   flex: 1; min-width: 0;
